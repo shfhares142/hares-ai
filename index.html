@@ -1,123 +1,376 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hares AI</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#090d16;color:#f5f5f5;font-family:Arial,sans-serif;padding:20px}
-.container{max-width:650px;margin:auto}
-header{padding:20px 0;border-bottom:1px solid #252b38;margin-bottom:25px}
-h1{color:#ff8a24;margin:0;font-size:29px}
-header p{color:#9da7b8}
-.card{background:#131a27;border:1px solid #283246;border-radius:16px;padding:20px;margin-bottom:18px}
-h2{font-size:19px;margin-top:0}
-label{display:block;margin:15px 0 8px;color:#c5ccda}
-textarea,select{width:100%;padding:13px;background:#0b111d;color:white;border:1px solid #39465c;border-radius:9px;font-size:15px}
-textarea{min-height:110px;resize:vertical}
-button{width:100%;padding:14px;background:#ff8a24;color:#111;border:0;border-radius:9px;font-weight:bold;font-size:16px;margin-top:16px}
-button:disabled{opacity:.5}
-#status{color:#ffb36b;margin-top:12px;font-size:14px}
-#result{white-space:pre-wrap;line-height:1.6;background:#0b111d;padding:14px;border-radius:9px;min-height:80px}
-.small{color:#9da7b8;font-size:13px}
-footer{text-align:center;color:#8791a3;font-size:13px;padding:20px}
-</style>
-</head>
-<body>
-<div class="container">
-<header>
-<h1>🐇 Hares AI</h1>
-<p>Your intelligent digital assistant</p>
-</header>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10131c">
+  <title>Hares AI | AI Post Studio</title>
 
-<div class="card">
-<h2>AI Post Studio</h2>
-<p class="small">Create engaging Facebook posts with Gemini AI.</p>
-
-<label for="topic">What should your post be about?</label>
-<textarea id="topic" placeholder="Example: Welcome to Hares AI, your intelligent digital assistant..."></textarea>
-
-<label for="style">Writing style</label>
-<select id="style">
-<option>Professional</option>
-<option>Friendly</option>
-<option>Creative</option>
-<option>Inspirational</option>
-<option>Informative</option>
-</select>
-
-<button id="generateBtn" onclick="generatePost()">✨ Generate Facebook Post</button>
-<p id="status"></p>
-</div>
-
-<div class="card">
-<h2>Generated Post</h2>
-<div id="result">Your generated post will appear here.</div>
-<button onclick="copyPost()">Copy Post</button>
-</div>
-
-<div class="card">
-<h2>Facebook Connection</h2>
-<p class="small">Facebook publishing is not connected yet. We will set it up after testing AI generation.</p>
-</div>
-
-<footer>Made with ❤️ by Mohammed Hares</footer>
-</div>
-
-<script>
-const BACKEND_URL = "https://hares-ai-backend.haresai456.workers.dev/";
-
-async function generatePost(){
-  const topic = document.getElementById("topic").value.trim();
-  const style = document.getElementById("style").value;
-  const status = document.getElementById("status");
-  const result = document.getElementById("result");
-  const button = document.getElementById("generateBtn");
-
-  if(!topic){
-    status.textContent = "Please enter a topic first.";
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Generating...";
-  status.textContent = "Hares AI is creating your post...";
-  result.textContent = "";
-
-  try{
-    const response = await fetch(BACKEND_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({topic,style})
-    });
-
-    const data = await response.json();
-
-    if(!response.ok || !data.success){
-      throw new Error(data.error || "Something went wrong.");
+  <style>
+    * {
+      box-sizing: border-box;
     }
 
-    result.textContent = data.post;
-    status.textContent = "Your Facebook post is ready! ✅";
-  }catch(error){
-    status.textContent = "Error: " + error.message;
-  }finally{
-    button.disabled = false;
-    button.textContent = "✨ Generate Facebook Post";
-  }
-}
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: #10131c;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
 
-function copyPost(){
-  const text = document.getElementById("result").textContent;
-  if(!text || text === "Your generated post will appear here."){
-    document.getElementById("status").textContent = "Generate a post first.";
-    return;
-  }
-  navigator.clipboard.writeText(text)
-    .then(()=>document.getElementById("status").textContent="Post copied! ✅")
-    .catch(()=>document.getElementById("status").textContent="Could not copy. Please select the text manually.");
-}
-</script>
+    .container {
+      max-width: 760px;
+      margin: 35px auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 38px;
+      font-weight: 800;
+      color: #ff8a24;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      color: #a5a9b5;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: #191e2a;
+      border: 1px solid #303747;
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 8px;
+      color: #d8dbe3;
+      font-weight: bold;
+    }
+
+    textarea, select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #394253;
+      background: #101521;
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .primary {
+      background: #ff8a24;
+      color: #151515;
+    }
+
+    .secondary {
+      background: #293347;
+      color: white;
+    }
+
+    .publish {
+      background: #1877f2;
+      color: white;
+    }
+
+    .preview {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #101521;
+      border: 1px solid #303747;
+      padding: 17px;
+      border-radius: 10px;
+      min-height: 100px;
+      line-height: 1.65;
+      color: #eeeeee;
+    }
+
+    .status {
+      margin-top: 14px;
+      color: #ffb15f;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .success {
+      color: #55d995;
+    }
+
+    .error {
+      color: #ff7777;
+    }
+
+    .small {
+      color: #9098a8;
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      color: #777f90;
+      font-size: 13px;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 14px;
+      }
+
+      .container {
+        margin-top: 20px;
+      }
+
+      .card {
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <header>
+      <div class="logo">🐇 Hares AI</div>
+      <div class="subtitle">
+        Your intelligent AI-powered Facebook assistant
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>✦ AI Post Studio</h2>
+
+      <label for="topic">What should your post be about?</label>
+      <textarea
+        id="topic"
+        placeholder="Example: Write a motivational post about education..."
+      ></textarea>
+
+      <label for="style">Writing style</label>
+      <select id="style">
+        <option value="Engaging">Engaging</option>
+        <option value="Professional">Professional</option>
+        <option value="Friendly">Friendly</option>
+        <option value="Inspirational">Inspirational</option>
+        <option value="Creative">Creative</option>
+        <option value="Educational">Educational</option>
+      </select>
+
+      <button class="primary" id="generateBtn">
+        ✨ Generate Facebook Post
+      </button>
+
+      <div class="status" id="generateStatus" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <h2>📝 Post Preview</h2>
+
+      <div class="preview" id="preview">Your generated post will appear here...</div>
+
+      <button class="secondary" id="copyBtn" disabled>
+        Copy Post
+      </button>
+
+      <button class="publish" id="publishBtn" disabled>
+        Publish to Facebook
+      </button>
+
+      <div class="status" id="publishStatus" aria-live="polite"></div>
+
+      <p class="small">
+        Review your post before publishing. Publishing happens only
+        when you press the button above.
+      </p>
+    </section>
+
+    <footer>
+      Hares AI · Made with ❤️ by Mohammed Hares
+    </footer>
+
+  </main>
+
+  <script>
+    const BACKEND_URL =
+      "https://hares-ai-backend.haresai456.workers.dev/";
+
+    const topicInput = document.getElementById("topic");
+    const styleInput = document.getElementById("style");
+
+    const generateBtn = document.getElementById("generateBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const publishBtn = document.getElementById("publishBtn");
+
+    const preview = document.getElementById("preview");
+    const generateStatus = document.getElementById("generateStatus");
+    const publishStatus = document.getElementById("publishStatus");
+
+    let generatedPost = "";
+
+    async function callBackend(data) {
+      const response = await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Request failed.");
+      }
+
+      return result;
+    }
+
+    generateBtn.addEventListener("click", async () => {
+      const topic = topicInput.value.trim();
+
+      if (!topic) {
+        generateStatus.textContent = "Please enter a topic first.";
+        generateStatus.className = "status error";
+        return;
+      }
+
+      generateBtn.disabled = true;
+      publishBtn.disabled = true;
+      copyBtn.disabled = true;
+
+      generateStatus.textContent = "Generating your post...";
+      generateStatus.className = "status";
+      publishStatus.textContent = "";
+
+      try {
+        const result = await callBackend({
+          topic: topic,
+          style: styleInput.value
+        });
+
+        generatedPost = result.post;
+
+        preview.textContent = generatedPost;
+        copyBtn.disabled = false;
+        publishBtn.disabled = false;
+
+        generateStatus.textContent = "Your post is ready!";
+        generateStatus.className = "status success";
+
+      } catch (error) {
+        generatedPost = "";
+        preview.textContent = "Your post could not be generated.";
+
+        generateStatus.textContent = error.message;
+        generateStatus.className = "status error";
+
+      } finally {
+        generateBtn.disabled = false;
+      }
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      if (!generatedPost) return;
+
+      try {
+        await navigator.clipboard.writeText(generatedPost);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtn.textContent = "Copy Post";
+        }, 2000);
+      } catch (error) {
+        publishStatus.textContent =
+          "Copy failed. Please select and copy the post manually.";
+        publishStatus.className = "status error";
+      }
+    });
+
+    publishBtn.addEventListener("click", async () => {
+      if (!generatedPost) return;
+
+      const confirmed = confirm(
+        "Are you sure you want to publish this post to your Hares AI Facebook Page?"
+      );
+
+      if (!confirmed) return;
+
+      publishBtn.disabled = true;
+      generateBtn.disabled = true;
+
+      publishStatus.textContent = "Publishing to Facebook...";
+      publishStatus.className = "status";
+
+      try {
+        const result = await callBackend({
+          action: "publish",
+          message: generatedPost
+        });
+
+        publishStatus.textContent =
+          "Successfully published! Facebook Post ID: " + result.postId;
+
+        publishStatus.className = "status success";
+
+        if (result.postUrl) {
+          const link = document.createElement("a");
+          link.href = result.postUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = " View Facebook post";
+          link.style.color = "#ff9b42";
+          publishStatus.appendChild(link);
+        }
+
+      } catch (error) {
+        publishStatus.textContent = "Publishing failed: " + error.message;
+        publishStatus.className = "status error";
+
+      } finally {
+        publishBtn.disabled = false;
+        generateBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
