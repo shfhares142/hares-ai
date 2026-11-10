@@ -1,90 +1,122 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#090d16">
-<title>Hares AI | Publisher</title>
+<title>Hares AI</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090d16;color:#f4f5f7;font-family:Arial,sans-serif}
-header{padding:22px 18px;border-bottom:1px solid #252b37;display:flex;align-items:center;gap:12px}
-.logo{background:#ff791f;color:#111;padding:11px;border-radius:13px;font-size:23px}
-h1{font-size:21px;margin:0}
-small{color:#a2a9b7}
-main{max-width:850px;margin:auto;padding:20px 16px}
-.status{background:#151c28;border:1px solid #293243;border-radius:14px;padding:16px;margin-bottom:20px}
-.dot{display:inline-block;width:9px;height:9px;background:#f59e0b;border-radius:50%;margin-right:7px}
-h2{font-size:19px;margin:22px 0 12px}
-.card{background:#111824;border:1px solid #273143;border-radius:16px;padding:17px;margin-bottom:16px}
-textarea{width:100%;min-height:145px;background:#090e18;color:white;border:1px solid #303b4e;border-radius:10px;padding:13px;font:15px Arial;resize:vertical}
-button{border:0;border-radius:10px;padding:13px 17px;background:#ff791f;color:#101010;font-weight:bold;font-size:14px;cursor:pointer}
-button.secondary{background:#252e3d;color:white}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-label{display:block;color:#bbc2cf;margin:13px 0 7px}
-input{width:100%;padding:12px;border-radius:9px;border:1px solid #303b4e;background:#090e18;color:white}
-.note{font-size:13px;color:#aab3c2;line-height:1.6}
-footer{text-align:center;color:#8993a3;padding:28px;font-size:12px}
+body{margin:0;background:#090d16;color:#f5f5f5;font-family:Arial,sans-serif;padding:20px}
+.container{max-width:650px;margin:auto}
+header{padding:20px 0;border-bottom:1px solid #252b38;margin-bottom:25px}
+h1{color:#ff8a24;margin:0;font-size:29px}
+header p{color:#9da7b8}
+.card{background:#131a27;border:1px solid #283246;border-radius:16px;padding:20px;margin-bottom:18px}
+h2{font-size:19px;margin-top:0}
+label{display:block;margin:15px 0 8px;color:#c5ccda}
+textarea,select{width:100%;padding:13px;background:#0b111d;color:white;border:1px solid #39465c;border-radius:9px;font-size:15px}
+textarea{min-height:110px;resize:vertical}
+button{width:100%;padding:14px;background:#ff8a24;color:#111;border:0;border-radius:9px;font-weight:bold;font-size:16px;margin-top:16px}
+button:disabled{opacity:.5}
+#status{color:#ffb36b;margin-top:12px;font-size:14px}
+#result{white-space:pre-wrap;line-height:1.6;background:#0b111d;padding:14px;border-radius:9px;min-height:80px}
+.small{color:#9da7b8;font-size:13px}
+footer{text-align:center;color:#8791a3;font-size:13px;padding:20px}
 </style>
 </head>
 <body>
+<div class="container">
 <header>
-<div class="logo">🐇</div>
-<div><h1>Hares AI</h1><small>Intelligent Facebook Publishing</small></div>
+<h1>🐇 Hares AI</h1>
+<p>Your intelligent digital assistant</p>
 </header>
-<main>
-<div class="status">
-<strong><span class="dot"></span>Setup in progress</strong>
-<p class="note">Your publishing dashboard is ready for configuration.</p>
-</div>
 
-<h2>Dashboard</h2>
 <div class="card">
-<strong>AI Post Studio</strong>
-<p class="note">Prepare and preview your Facebook posts.</p>
-<label>What should your post be about?</label>
-<textarea id="topic" placeholder="Example: Welcome post for our Facebook community..."></textarea>
-<label>Post style</label>
-<select id="style" style="width:100%;padding:12px;background:#090e18;color:white;border:1px solid #303b4e;border-radius:9px">
+<h2>AI Post Studio</h2>
+<p class="small">Create engaging Facebook posts with Gemini AI.</p>
+
+<label for="topic">What should your post be about?</label>
+<textarea id="topic" placeholder="Example: Welcome to Hares AI, your intelligent digital assistant..."></textarea>
+
+<label for="style">Writing style</label>
+<select id="style">
 <option>Professional</option>
 <option>Friendly</option>
+<option>Creative</option>
 <option>Inspirational</option>
-<option>Educational</option>
+<option>Informative</option>
 </select>
-<div class="actions">
-<button onclick="generate()">Generate preview</button>
-<button class="secondary" onclick="clearPost()">Clear</button>
-</div>
-<label>Post preview</label>
-<textarea id="preview" placeholder="Your generated post will appear here..." readonly></textarea>
-<p class="note">AI generation will be connected in the next development stage.</p>
+
+<button id="generateBtn" onclick="generatePost()">✨ Generate Facebook Post</button>
+<p id="status"></p>
 </div>
 
 <div class="card">
-<strong>Facebook connection</strong>
-<p class="note">Your Hares AI Facebook Page will be connected securely through the backend.</p>
-<p><span class="dot"></span>Not connected yet</p>
+<h2>Generated Post</h2>
+<div id="result">Your generated post will appear here.</div>
+<button onclick="copyPost()">Copy Post</button>
 </div>
 
 <div class="card">
-<strong>Daily automation</strong>
-<p class="note">Daily scheduling, publishing history and pause/resume controls will be activated after backend setup.</p>
+<h2>Facebook Connection</h2>
+<p class="small">Facebook publishing is not connected yet. We will set it up after testing AI generation.</p>
 </div>
-</main>
-<footer>Hares AI · Made with ❤️ by Mohammed Hares</footer>
+
+<footer>Made with ❤️ by Mohammed Hares</footer>
+</div>
+
 <script>
-function generate(){
-const topic=document.getElementById('topic').value.trim();
-const style=document.getElementById('style').value;
-if(!topic){alert('Please enter a post topic first.');return;}
-document.getElementById('preview').value=
-'['+style+' post draft]\n\nTopic: '+topic+
-'\n\nYour AI-generated Facebook content will be available after Gemini is connected.';
+const BACKEND_URL = "https://hares-ai-backend.haresai456.workers.dev/";
+
+async function generatePost(){
+  const topic = document.getElementById("topic").value.trim();
+  const style = document.getElementById("style").value;
+  const status = document.getElementById("status");
+  const result = document.getElementById("result");
+  const button = document.getElementById("generateBtn");
+
+  if(!topic){
+    status.textContent = "Please enter a topic first.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Generating...";
+  status.textContent = "Hares AI is creating your post...";
+  result.textContent = "";
+
+  try{
+    const response = await fetch(BACKEND_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({topic,style})
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || !data.success){
+      throw new Error(data.error || "Something went wrong.");
+    }
+
+    result.textContent = data.post;
+    status.textContent = "Your Facebook post is ready! ✅";
+  }catch(error){
+    status.textContent = "Error: " + error.message;
+  }finally{
+    button.disabled = false;
+    button.textContent = "✨ Generate Facebook Post";
+  }
 }
-function clearPost(){
-document.getElementById('topic').value='';
-document.getElementById('preview').value='';
+
+function copyPost(){
+  const text = document.getElementById("result").textContent;
+  if(!text || text === "Your generated post will appear here."){
+    document.getElementById("status").textContent = "Generate a post first.";
+    return;
+  }
+  navigator.clipboard.writeText(text)
+    .then(()=>document.getElementById("status").textContent="Post copied! ✅")
+    .catch(()=>document.getElementById("status").textContent="Could not copy. Please select the text manually.");
 }
 </script>
 </body>
